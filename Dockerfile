@@ -1,16 +1,17 @@
-FROM ubuntu:18.04
-MAINTAINER Faithful <faithful@infused.io>
-RUN apt-get update && apt-get install -y apache2 && apt-get clean && rm -rf /var/lib/apt/lists/*
-ENV APACHE_RUN_USER  www-data
-ENV APACHE_RUN_GROUP www-data
-ENV APACHE_LOG_DIR   /var/log/apache2
-ENV APACHE_PID_FILE  /var/run/apache2/apache2.pid
-ENV APACHE_RUN_DIR   /var/run/apache2
-ENV APACHE_LOCK_DIR  /var/lock/apache2
-ENV APACHE_LOG_DIR   /var/log/apache2
-RUN mkdir -p $APACHE_RUN_DIR
-RUN mkdir -p $APACHE_LOCK_DIR
-RUN mkdir -p $APACHE_LOG_DIR
-COPY index.html /var/www/html
-EXPOSE 80
-CMD ["/usr/sbin/apache2", "-D", "FOREGROUND"]
+FROM debian:buster
+#FROM ubuntu
+MAINTAINER Marcin <lapillo0@gmail.com>
+RUN apt-get update && apt-get install -y wget
+RUN apt-get install -y gnupg gnupg2 gnupg1
+RUN wget -q -O - https://apt.mopidy.com/mopidy.gpg | apt-key add -
+RUN wget -q -O /etc/apt/sources.list.d/mopidy.list https://apt.mopidy.com/buster.list
+RUN wget -q -O /etc/apt/sources.list.d/mopidy.list https://apt.mopidy.com/stretch.list
+RUN apt-get update
+RUN apt-get install -y mopidy
+RUN apt-get install -y python-pip
+RUN pip install Mopidy-Iris
+RUN mkdir /root/.config && mkdir /root/.config/mopidy
+COPY mopidy.conf /root/.config/mopidy/mopidy.conf
+
+EXPOSE 6680
+CMD ["mopidy"]
