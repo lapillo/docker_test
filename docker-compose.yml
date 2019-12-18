@@ -1,7 +1,8 @@
-version: 1
+version: '3.3'
+
 services:
-  web:
-    build: samba
+  samba:
+    build: ./samba
     ports:
-    - "443:443"
+      - "445:445"
     
