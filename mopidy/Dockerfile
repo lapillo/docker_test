@@ -1,6 +1,4 @@
 FROM debian:buster
-#FROM ubuntu
-MAINTAINER Marcin <lapillo0@gmail.com>
 RUN apt-get update && apt-get install -y wget
 RUN apt-get install -y gnupg gnupg2 gnupg1
 RUN wget -q -O - https://apt.mopidy.com/mopidy.gpg | apt-key add -
