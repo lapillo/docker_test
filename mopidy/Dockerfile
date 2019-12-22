@@ -5,11 +5,22 @@ RUN wget -q -O - https://apt.mopidy.com/mopidy.gpg | apt-key add -
 RUN wget -q -O /etc/apt/sources.list.d/mopidy.list https://apt.mopidy.com/buster.list
 RUN wget -q -O /etc/apt/sources.list.d/mopidy.list https://apt.mopidy.com/stretch.list
 RUN apt-get update
-RUN apt-get install -y mopidy
-RUN apt-get install -y python-pip
+RUN apt-get install -y mopidy gstreamer1.0-plugins-bad python-pip
 RUN pip install Mopidy-Iris
-RUN mkdir /root/.config && mkdir /root/.config/mopidy
-COPY mopidy.conf /root/.config/mopidy/mopidy.conf
+RUN pip install Mopidy-MusicBox-Webclient
+RUN pip install Mopidy-Moped
+
+RUN apt-get install -y gstreamer1.0-plugins-bad
+RUN apt-get install -y sudo
+
+RUN echo "mopidy ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+#RUN mkdir /root/.config && mkdir /root/.config/mopidy
+#COPY mopidy.conf /root/.config/mopidy/mopidy.conf
+COPY mopidy.conf /var/lib/mopidy/.config/mopidy/mopidy.conf
+USER mopidy
+
+ENV XDG_MUSIC_DIR /var/lib/mopidy/file
 
 EXPOSE 6680
-CMD ["mopidy"]
+CMD mopidy 
