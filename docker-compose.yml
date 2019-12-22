@@ -50,7 +50,6 @@ services:
       - /home/pi/containers_configs/mopidy/m3u:/var/lib/mopidy/.local/share/mopidy/m3u
       - /media/1TB/media/muzyka:/var/lib/mopidy/.local/share/mopidy/local
       - /home/pi/containers_configs/mopidy/local-images:/var/lib/mopidy/.local/share/mopidy/local-images
-
     devices:
       - "/dev/snd"
 
