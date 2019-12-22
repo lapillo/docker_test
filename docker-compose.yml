@@ -24,7 +24,7 @@ services:
       - /media/transmission:/media/transmission
       - /media/1TB:/media/1TB
       - /media/500GB:/media/500GB
-      - /home/pi/homeassistant:/share/homeassistant
+      - /home/pi/containers_configs/homeassistant:/share/homeassistant
       - /media/backup:/media/backup
 
   transmission:
@@ -42,6 +42,7 @@ services:
     build: ./mopidy
     ports:
       - 6680:6680/tcp
+      - 6600:6600
     links:
       - pulseaudio
     volumes:

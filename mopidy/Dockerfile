@@ -24,4 +24,5 @@ RUN sudo chown -R mopidy:audio /var/lib/mopidy
 ENV XDG_MUSIC_DIR /var/lib/mopidy/file
 
 EXPOSE 6680
-CMD mopidy 
+EXPOSE 6600
+CMD mopidy
