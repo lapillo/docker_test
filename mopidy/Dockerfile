@@ -8,17 +8,18 @@ RUN apt-get update
 RUN apt-get install -y mopidy gstreamer1.0-plugins-bad python-pip
 RUN pip install Mopidy-Iris
 RUN pip install Mopidy-MusicBox-Webclient
-RUN pip install Mopidy-Moped
+#RUN pip install Mopidy-Moped
+#RUN pip install Mopidy-Mopify
 
 RUN apt-get install -y gstreamer1.0-plugins-bad
 RUN apt-get install -y sudo
 
 RUN echo "mopidy ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-
 #RUN mkdir /root/.config && mkdir /root/.config/mopidy
 #COPY mopidy.conf /root/.config/mopidy/mopidy.conf
 COPY mopidy.conf /var/lib/mopidy/.config/mopidy/mopidy.conf
 USER mopidy
+RUN sudo chown -R mopidy:audio /var/lib/mopidy
 
 ENV XDG_MUSIC_DIR /var/lib/mopidy/file
 

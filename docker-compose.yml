@@ -1,6 +1,21 @@
 version: '2'
 
 services:
+  homeassistant:
+    build: ./homeassistant
+    ports:
+      - 8123:8123
+    links:
+      - mosquitto
+    volumes:
+      - /home/pi/containers_configs/homeassistant:/config
+
+  mosquitto:
+    build: ./mosquitto
+    ports:
+      - 1883:1883/tcp
+    restart: unless-stopped 
+
   # samba:
   #   build: ./samba
   #   ports:
@@ -11,6 +26,7 @@ services:
   #     - /media/500GB:/media/500GB
   #     - /home/pi/homeassistant:/share/homeassistant
   #     - /media/backup:/media/backup
+
   # transmission:
   #   build: ./transmission
   #   ports:
@@ -21,12 +37,13 @@ services:
   #   volumes: 
   #     - /media/transmission:/media/transmission
   #     - /home/pi/containers_configs/transmission-daemon:/etc/transmission-daemon
+
   mopidy:
     build: ./mopidy
     ports:
       - 6680:6680/tcp
-    #links:
-    #  - pulseaudio
+    links:
+      - pulseaudio
     volumes:
       - /media/1TB/media/muzyka:/var/lib/mopidy/file
       - /home/pi/containers_configs/mopidy/m3u:/var/lib/mopidy/.local/share/mopidy/m3u
@@ -35,6 +52,7 @@ services:
 
     devices:
       - "/dev/snd"
+
   pulseaudio:
     build: ./pulseaudio
     ports:
