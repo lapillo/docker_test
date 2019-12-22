@@ -16,27 +16,27 @@ services:
       - 1883:1883/tcp
     restart: unless-stopped 
 
-  # samba:
-  #   build: ./samba
-  #   ports:
-  #     - "445:445"
-  #   volumes: 
-  #     - /media/transmission:/media/transmission
-  #     - /media/1TB:/media/1TB
-  #     - /media/500GB:/media/500GB
-  #     - /home/pi/homeassistant:/share/homeassistant
-  #     - /media/backup:/media/backup
+  samba:
+    build: ./samba
+    ports:
+      - "445:445"
+    volumes: 
+      - /media/transmission:/media/transmission
+      - /media/1TB:/media/1TB
+      - /media/500GB:/media/500GB
+      - /home/pi/homeassistant:/share/homeassistant
+      - /media/backup:/media/backup
 
-  # transmission:
-  #   build: ./transmission
-  #   ports:
-  #     - 9091:9091
-  #     - 51413:51413
-  #     - 51413:51413/udp
-  #   restart: always
-  #   volumes: 
-  #     - /media/transmission:/media/transmission
-  #     - /home/pi/containers_configs/transmission-daemon:/etc/transmission-daemon
+  transmission:
+    build: ./transmission
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    restart: always
+    volumes: 
+      - /media/transmission:/media/transmission
+      - /home/pi/containers_configs/transmission-daemon:/etc/transmission-daemon
 
   mopidy:
     build: ./mopidy
