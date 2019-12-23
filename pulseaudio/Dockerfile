@@ -1,5 +1,5 @@
 FROM debian:buster
-RUN apt-get update && apt-get upgrade
+RUN apt-get update && apt-get -y upgrade
 RUN apt-get install -y pulseaudio pulseaudio-module-bluetooth
 RUN adduser --disabled-password --gecos '' pi
 RUN sed -i 's/<policy user="root">/<policy user="pi">/g' /etc/dbus-1/system.d/bluetooth.conf
