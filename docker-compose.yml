@@ -1,11 +1,38 @@
 version: '2'
 
 services:
+
+  motioneye:
+    build: ./motioneye
+    ports:
+      - 8765:8765
+      - 8081:8081
+    hostname: motioneye
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /home/pi/containers_configs/motioneye:/etc/motioneye
+      - /home/pi/containers_configs/motioneye/records:/var/lib/motioneye
+      - /dev:/dev
+    #devices:
+    #  - "/dev/video0"
+    restart: always
+
+
+  node-red:
+    build: ./node-red
+    ports:
+      - 1880:1880
+    depends_on:
+      - homeassistant
+    volumes:
+      - volume_node-red:/data
+
+
   homeassistant:
     build: ./homeassistant
     ports:
       - 8123:8123
-    links:
+    depends_on: 
       - mosquitto
     volumes:
       - /home/pi/containers_configs/homeassistant:/config
@@ -43,7 +70,7 @@ services:
     ports:
       - 6680:6680/tcp
       - 6600:6600
-    links:
+    depends_on: 
       - pulseaudio
     volumes:
       - /media/1TB/media/muzyka:/var/lib/mopidy/file
@@ -60,3 +87,6 @@ services:
     restart: always
     volumes: 
       - /var/run/dbus:/var/run/dbus
+
+volumes:
+    volume_node-red: {}

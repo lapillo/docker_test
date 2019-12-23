@@ -1,5 +1,6 @@
 FROM debian:buster
-RUN apt-get update && apt-get install -y wget
+RUN apt-get update && apt-get upgrade
+RUN apt-get install -y wget
 RUN apt-get install -y gnupg gnupg2 gnupg1
 RUN wget -q -O - https://apt.mopidy.com/mopidy.gpg | apt-key add -
 RUN wget -q -O /etc/apt/sources.list.d/mopidy.list https://apt.mopidy.com/buster.list
