@@ -7,13 +7,12 @@ RUN wget -q -O - https://apt.mopidy.com/mopidy.gpg | apt-key add -
 RUN wget -q -O /etc/apt/sources.list.d/mopidy.list https://apt.mopidy.com/buster.list
 RUN wget -q -O /etc/apt/sources.list.d/mopidy.list https://apt.mopidy.com/stretch.list
 RUN apt-get update
-RUN apt-get install -y mopidy gstreamer1.0-plugins-bad python-pip
+RUN apt-get install -y mopidy gstreamer1.0-plugins* python-pip
 RUN pip install Mopidy-Iris
 RUN pip install Mopidy-MusicBox-Webclient
 #RUN pip install Mopidy-Moped
 #RUN pip install Mopidy-Mopify
 
-RUN apt-get install -y gstreamer1.0-plugins-bad
 RUN apt-get install -y sudo
 
 RUN echo "mopidy ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers

@@ -2,6 +2,25 @@ version: '2'
 
 services:
 
+  mpd:
+    build: ./mpd
+    ports:
+      - 6600:6600
+    depends_on: 
+     - pulseaudio
+    volumes:
+      - volume_mpd:/config
+      - /media/1TB/media/muzyka:/media/muzyka
+
+  mpd_client_ympd:
+    build: ./mpd_client_ympd
+    ports:
+      - 80:80
+    depends_on: 
+      - mpd
+    volumes:
+      - /media/1TB/media/muzyka:/media/muzyka 
+
   motioneye:
     build: ./motioneye
     ports:
@@ -65,20 +84,18 @@ services:
       - /media/transmission:/media/transmission
       - /home/pi/containers_configs/transmission-daemon:/etc/transmission-daemon
 
-  mopidy:
-    build: ./mopidy
-    ports:
-      - 6680:6680/tcp
-      - 6600:6600
-    depends_on: 
-      - pulseaudio
-    volumes:
-      - /media/1TB/media/muzyka:/var/lib/mopidy/file
-      - /home/pi/containers_configs/mopidy/m3u:/var/lib/mopidy/.local/share/mopidy/m3u
-      - /media/1TB/media/muzyka:/var/lib/mopidy/.local/share/mopidy/local
-      - /home/pi/containers_configs/mopidy/local-images:/var/lib/mopidy/.local/share/mopidy/local-images
-    devices:
-      - "/dev/snd"
+  # mopidy:
+  #   build: ./mopidy
+  #   ports:
+  #     - 6680:6680/tcp
+  #     - 6600:6600
+  #   depends_on: 
+  #     - pulseaudio
+  #   volumes:
+  #     - /media/1TB/media/muzyka:/var/lib/mopidy/file
+  #     - /home/pi/containers_configs/mopidy/m3u:/var/lib/mopidy/.local/share/mopidy/m3u
+  #     - /media/1TB/media/muzyka:/var/lib/mopidy/.local/share/mopidy/local
+  #     - /home/pi/containers_configs/mopidy/local-images:/var/lib/mopidy/.local/share/mopidy/local-images
 
   pulseaudio:
     build: ./pulseaudio
@@ -87,6 +104,18 @@ services:
     restart: always
     volumes: 
       - /var/run/dbus:/var/run/dbus
+      # - /dev/shm:/dev/shm
+      # - /dev:/dev
+      - /home/pi:/audio
+      #- /proc/asound/card0:/proc/asound/card0
+    devices:
+      - /dev/snd
+      # - /dev/snd/controlC0
+      # - /dev/snd/pcmC0D0p
+      # - /dev/snd/pcmC0D1p
+      # - /dev/snd/pcmC0D2p
+      # - /dev/snd/timer
 
 volumes:
     volume_node-red: {}
+    volume_mpd: {}
