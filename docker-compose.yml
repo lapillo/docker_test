@@ -2,9 +2,21 @@ version: '2'
 
 services:
 
+  
+  duplicati:
+    build: ./duplicati
+    ports:
+      - 8200:8200
+    restart: unless-stopped
+    volumes:
+      - /media/1TB/share_net:/media/1TB/share_net
+      - /home/pi/containers_configs/duplicati/:/data
+    # environment:
+    #   - UID=0
+    #   - GID=0
+
   syncthing:
     build: ./syncthing
-    #image: funkyfuture/rpi-syncthing
     ports:
       - 8384:8384
     restart: unless-stopped
@@ -12,13 +24,9 @@ services:
       - /home/pi/containers_configs/syncthing/config:/syncthing/config
       - /home/pi/containers_configs/syncthing/data:/syncthing/data
       - /media/1TB/share_net:/media/1TB/share_net
-    # environment:
-    #   - UID=0
-    #   - GID=0
 
   syncthing2:
     build: ./syncthing2
-    #image: funkyfuture/rpi-syncthing
     ports:
       - 8385:8385
     restart: unless-stopped
@@ -28,8 +36,6 @@ services:
       - /media/backup:/media/backup
     environment:
       - GUI_ADDRESS=[::]:8385
-      # - UID=0
-      # - GID=0
 
   mpd:
     build: ./mpd
@@ -40,6 +46,7 @@ services:
     volumes:
       - volume_mpd:/config
       - /media/1TB/media/muzyka:/media/muzyka
+    restart: unless-stopped
 
   mpd_client_ympd:
     build: ./mpd_client_ympd
@@ -49,7 +56,7 @@ services:
       - mpd
     # volumes:
     #   - /media/1TB/media/muzyka:/media/muzyka 
-
+    restart: unless-stopped
 
   motioneye:
     build: ./motioneye
@@ -64,7 +71,7 @@ services:
       - /dev:/dev
     #devices:
     #  - "/dev/video0"
-    restart: always
+    restart: unless-stopped
 
 
   node-red:
@@ -75,7 +82,7 @@ services:
       - homeassistant
     volumes:
       - volume_node-red:/data
-
+    restart: unless-stopped
 
   homeassistant:
     build: ./homeassistant
@@ -85,6 +92,7 @@ services:
       - mosquitto
     volumes:
       - /home/pi/containers_configs/homeassistant:/config
+    restart: unless-stopped
 
   mosquitto:
     build: ./mosquitto
@@ -102,6 +110,7 @@ services:
       - /media/500GB:/media/500GB
       - /home/pi/containers_configs/homeassistant:/share/homeassistant
       - /media/backup:/media/backup
+    restart: unless-stopped
 
   transmission:
     build: ./transmission
@@ -109,7 +118,7 @@ services:
       - 9091:9091
       - 51413:51413
       - 51413:51413/udp
-    restart: always
+    restart: unless-stopped
     volumes: 
       - /media/transmission:/media/transmission
       - /home/pi/containers_configs/transmission-daemon:/etc/transmission-daemon
@@ -131,7 +140,7 @@ services:
     build: ./pulseaudio
     ports:
       - 4713:4713/tcp
-    restart: always
+    restart: unless-stopped
     volumes: 
       - /var/run/dbus:/var/run/dbus
       # - /dev/shm:/dev/shm
