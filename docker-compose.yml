@@ -2,6 +2,35 @@ version: '2'
 
 services:
 
+  syncthing:
+    build: ./syncthing
+    #image: funkyfuture/rpi-syncthing
+    ports:
+      - 8384:8384
+    restart: unless-stopped
+    volumes:
+      - /home/pi/containers_configs/syncthing/config:/syncthing/config
+      - /home/pi/containers_configs/syncthing/data:/syncthing/data
+      - /media/1TB/share_net:/media/1TB/share_net
+    # environment:
+    #   - UID=0
+    #   - GID=0
+
+  syncthing2:
+    build: ./syncthing2
+    #image: funkyfuture/rpi-syncthing
+    ports:
+      - 8385:8385
+    restart: unless-stopped
+    volumes:
+      - /home/pi/containers_configs/syncthing2/config:/syncthing/config
+      - /home/pi/containers_configs/syncthing2/data:/syncthing/data
+      - /media/backup:/media/backup
+    environment:
+      - GUI_ADDRESS=[::]:8385
+      # - UID=0
+      # - GID=0
+
   mpd:
     build: ./mpd
     ports:
@@ -15,11 +44,12 @@ services:
   mpd_client_ympd:
     build: ./mpd_client_ympd
     ports:
-      - 80:80
+      - 81:81
     depends_on: 
       - mpd
-    volumes:
-      - /media/1TB/media/muzyka:/media/muzyka 
+    # volumes:
+    #   - /media/1TB/media/muzyka:/media/muzyka 
+
 
   motioneye:
     build: ./motioneye

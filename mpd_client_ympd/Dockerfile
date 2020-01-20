@@ -6,11 +6,11 @@ RUN apt-get install -y nano
 
 RUN apt-get install -y wget tar bzip2 libmpdclient-dev
 RUN wget -q -O /home/ympd-1.2.3-armhf.tar.bz2 https://ympd.org/downloads/ympd-1.2.3-armhf.tar.bz2
-WORKDIR "/home"
+WORKDIR /home
 RUN tar -xvf ympd-1.2.3-armhf.tar.bz2
-WORKDIR "/"
+WORKDIR /
 
 EXPOSE 80
 
-CMD /home/ympd --webport 80
+CMD /home/ympd --webport 81
 #CMD tail -f /etc/passwd
