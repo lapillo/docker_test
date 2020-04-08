@@ -1,19 +1,97 @@
 version: '2'
 
-services:
+services:   
 
-  
-  duplicati:
-    build: ./duplicati
+  portainer:
+    image: portainer/portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /containers_configs/portainer/data:/data
+    restart: always
     ports:
-      - 8200:8200
+      - 9000:9000
+      - 8000:8000
+
+  mariadb:
+    build: ./mariadb
+    volumes:
+      - volume_mariadb_data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: scrapy
+      MYSQL_PASSWORD: scrapy
+      # - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      # #- MYSQL_RANDOM_ROOT_PASSWORD=yes
+
+  scrapy:
+    build: ./scrapy
+    volumes:
+      - /home/pi/containers_configs/scrapy:/app/projects
+      - volume_scrapy_crontabs:/usr/lib/node_modules/crontab-ui/crontabs
+    ports:
+      - 8881:8000
+    restart: unless-stopped
+    environment:
+      #- CRON_PATH=/var/spool/cron
+      - HOST=0.0.0.0 
+      #- PORT=9000
+
+      
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
     restart: unless-stopped
     volumes:
-      - /media/1TB/share_net:/media/1TB/share_net
-      - /home/pi/containers_configs/duplicati/:/data
-    # environment:
-    #   - UID=0
-    #   - GID=0
+      - volume_grafana_config:/etc/grafana
+      - volume_grafana_data:/var/lib/grafana
+      - volume_grafana_home:/usr/share/grafana
+      #- volume_grafana_plugins:/var/lib/grafana/plugins
+      #- volume_grafana_provisioning:/etc/grafana/provisioning
+    depends_on:
+      - mariadb
+
+  zigbee2mqttAssistant:
+    image: carldebilly/zigbee2mqttassistant
+    environment:
+      - Z2MA_SETTINGS__MQTTSERVER=mosquitto
+      #- Z2MA_SETTINGS__MQTTUSERNAME={MQTTUSERNAME}
+      #- Z2MA_SETTINGS__MQTTPASSWORD={MQTTPASSWORD}
+      # Set to your TimeZone when using on Linux https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+      # Won't work if you're using the Windows version of the container
+      - TZ=Europe/Warsaw
+    ports:
+      - 8880:80
+    restart: unless-stopped
+    depends_on: 
+      - mosquitto
+
+  zigbee2mqtt:
+#    container_name: zigbee2mqtt
+    image: koenkk/zigbee2mqtt
+    volumes:
+      - /home/pi/containers_configs/zigbee2mqtt:/app/data
+      - /run/udev:/run/udev:ro
+    devices:
+      - /dev/ttyACM0:/dev/ttyACM0
+    restart: unless-stopped
+    depends_on: 
+      - mosquitto
+    environment:
+      - TZ=Europe/Warsaw
+
+  duplicati:
+     build: ./duplicati
+     ports:
+       - 8200:8200
+     restart: unless-stopped
+     volumes:
+       - /media/1TB/share_net:/media/1TB/share_net
+       - /media/backup/duplicati:/media/backup/duplicati
+       - /home/pi/containers_configs/duplicati/:/data
 
   syncthing:
     build: ./syncthing
@@ -83,6 +161,8 @@ services:
     volumes:
       - volume_node-red:/data
     restart: unless-stopped
+    environment:
+      - TZ=Europe/Warsaw
 
   homeassistant:
     build: ./homeassistant
@@ -92,7 +172,17 @@ services:
       - mosquitto
     volumes:
       - /home/pi/containers_configs/homeassistant:/config
+      # - /var/run/dbus:/var/run/dbus
+      # - /dev/bus/usb:/dev/bus/usb
+      # - /opt/bluetooth:/var/lib/bluetooth
+      # - /sys/fs/cgroup:/sys/fs/cgroup:ro
+
     restart: unless-stopped
+    # cap_add:
+    #   - ALL
+    #devices:
+    #  - /dev/bus/usb/001/009
+    network_mode: host
 
   mosquitto:
     build: ./mosquitto
@@ -109,6 +199,7 @@ services:
       - /media/1TB:/media/1TB
       - /media/500GB:/media/500GB
       - /home/pi/containers_configs/homeassistant:/share/homeassistant
+      - /home/pi/containers_configs/scrapy:/share/scrapy
       - /media/backup:/media/backup
     restart: unless-stopped
 
@@ -140,6 +231,7 @@ services:
     build: ./pulseaudio
     ports:
       - 4713:4713/tcp
+      - 8001:8000
     restart: unless-stopped
     volumes: 
       - /var/run/dbus:/var/run/dbus
@@ -158,3 +250,10 @@ services:
 volumes:
     volume_node-red: {}
     volume_mpd: {}
+    volume_grafana_config: {}
+    volume_grafana_data: {}
+    volume_grafana_home: {}
+    volume_mariadb_data: {}
+    volume_scrapy_crontabs: {}
+
+

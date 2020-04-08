@@ -20,6 +20,16 @@ RUN apt-get install -y alsa-utils
 #RUN usermod -a -G audio pi
 RUN usermod -a -G audio root
 
+#web control
+RUN apt-get install -y curl
+RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
+RUN apt-get install -y nodejs git
+RUN git clone https://github.com/Siot/PaWebControl.git
+WORKDIR /PaWebControl
+RUN npm ci
+EXPOSE 8000
+
 EXPOSE 4713
 #USER pi:pi
-CMD pulseaudio -vvvv -L 'module-alsa-sink device=hw:0,0' -L 'module-switch-on-connect'
+CMD npm run start & pulseaudio -vvvv -L 'module-alsa-sink device=hw:0,0' -L 'module-switch-on-connect'
+#CMD pulseaudio -vvvv -L 'module-alsa-sink device=hw:0,0' -L 'module-switch-on-connect'
